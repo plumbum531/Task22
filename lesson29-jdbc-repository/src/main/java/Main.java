@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
@@ -53,18 +54,18 @@ public class Main {
         book2.price = new BigDecimal("100500700.255123");
 
         final Comment comment1 = new Comment();
-        comment1.date = Instant.now();
+        comment1.date =  Date.from(Instant.now());
         comment1.text = "Good book";
 
         Collection <Comment> commentsFirstbook = new ArrayList<>();
         commentsFirstbook.add(comment1);
 
         final Comment comment2 = new Comment();
-        comment2.date = Instant.now();
+        comment2.date = Date.from(Instant.now());
         comment2.text = "Bad book";
 
         final Comment comment3 = new Comment();
-        comment3.date = Instant.now();
+        comment3.date = Date.from(Instant.now());
         comment3.text = "Nice book";
 
         Collection<Comment> commentsSecondBooK = new ArrayList<>();
@@ -82,6 +83,7 @@ public class Main {
         //repository.save(book1, author1);
         //repository.save(book1, author1, comment1, user1); //надо понять как добавлять много коментов к одной книге
         //repository.save(book2, author2, comment2, user2);
+        //reposotiry.saveUser
         Collection<Book> books = repository.getAll();
         System.out.println("Books count:" + books.size());
     }

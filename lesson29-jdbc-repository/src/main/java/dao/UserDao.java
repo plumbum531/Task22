@@ -70,10 +70,10 @@ public class UserDao {
     }
 
     public void updateUser(User user) {
-        final String insertTemplate =
+        final String updateTemplate =
                 "UPDATE users SET registryDate = ?, nickName = ? WHERE id = ?";
 
-        try (PreparedStatement statement = connection.prepareStatement(insertTemplate)) {
+        try (PreparedStatement statement = connection.prepareStatement(updateTemplate)) {
             statement.setString(1, user.registryDate);
             statement.setString(2, user.nickName);
             statement.setInt(3, user.idUser);
@@ -87,15 +87,15 @@ public class UserDao {
         }
     }
 
-    public Collection<User> getAllUser(){
+    public Collection<User> getAllUser() {
         final Collection<User> users = new ArrayList<>();
         final String insertTemplate =
                 "SELECT * FROM users";
 
-        try(Statement statement= connection.createStatement()){
+        try (Statement statement = connection.createStatement()) {
             ResultSet cursor = statement.executeQuery(insertTemplate);
 
-            while(cursor.next()){
+            while (cursor.next()) {
                 users.add(createUserFromCursorIfPossible(cursor));
             }
 
