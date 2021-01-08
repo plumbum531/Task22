@@ -42,6 +42,20 @@ public class UserDao {
         }
     }
 
+    public Optional<User> getUserByNickName(String nickName) {
+        try (Statement statement = connection.createStatement()) {
+            ResultSet cursor = statement.executeQuery(
+                    "SELECT * FROM users WHERE nickName = " + nickName);
+            if (!cursor.next()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(createUserFromCursorIfPossible(cursor));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to fetch one book", e);
+        }
+    }
+
     private User createUserFromCursorIfPossible(ResultSet cursor) throws SQLException {
         final User user = new User();
         user.registryDate = cursor.getString("registryDate");

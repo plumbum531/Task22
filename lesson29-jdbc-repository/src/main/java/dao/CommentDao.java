@@ -29,9 +29,10 @@ public class CommentDao {
     }
 
     public void insertComment(Comment comment) {
-        final String insertTemplate = "INSERT INTO comments(date, text, userId, bookId) VALUE(?,?,?,?)";
+        //final String insertTemplate = "INSERT INTO comments(text,userId,bookId) VALUES(?,?,?)";
+        final String insertTemplate = "INSERT INTO comments(date,text,userId,bookId) VALUES(?,?,?,?)";
         try (PreparedStatement statement = connection.prepareStatement(insertTemplate)) {
-            statement.setDate(1, (comment.date));
+            statement.setDate(1, comment.date);
             statement.setString(2, comment.text);
             statement.setInt(3, comment.userId);
             statement.setInt(4, comment.bookId);
@@ -46,11 +47,9 @@ public class CommentDao {
     }
 
     public void updateComment(Comment comment) {
-        final String updateTemplate =
-                "UPDATE comments SET date = ?, text = ?, userId = ?, bookId =? WHERE id = ?";
-
+        final String updateTemplate = "UPDATE comments SET date=?, text=?, userId=?, bookId=? WHERE id=?";
         try (PreparedStatement statement = connection.prepareStatement(updateTemplate)) {
-            statement.setDate(1, (comment.date));
+            statement.setDate(1, comment.date);
             statement.setString(2, comment.text);
             statement.setInt(3, comment.userId);
             statement.setInt(4, comment.bookId);
@@ -67,8 +66,7 @@ public class CommentDao {
 
     public Collection<Comment> getAllComment() {
         final Collection<Comment> comments = new ArrayList<>();
-        final String insertTemplate =
-                "SELECT * FROM comments";
+        final String insertTemplate = "SELECT * FROM comments";
 
         try (Statement statement = connection.createStatement()) {
             ResultSet cursor = statement.executeQuery(insertTemplate);
@@ -85,6 +83,7 @@ public class CommentDao {
 
     public Comment createCommentsFromCursorIfPossible(ResultSet cursor) throws SQLException {
         Comment comment = new Comment();
+        comment.id = cursor.getInt(1);
         comment.date = cursor.getDate(2);
         comment.text = cursor.getString(3);
         comment.userId = cursor.getInt(4);
@@ -97,6 +96,21 @@ public class CommentDao {
         final String template = "SELECT * FROM comments WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(template)) {
             statement.setInt(1, id);
+            ResultSet cursor = statement.executeQuery();
+            if (!cursor.next()) {
+                return Optional.empty();
+            } else {
+                return Optional.of(createCommentsFromCursorIfPossible(cursor));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find comment", e);
+        }
+    }
+
+    public Optional<Comment> getCommentByText(Comment comment) {
+        final String template = "SELECT * FROM comments WHERE text = ? LIMIT 1";
+        try (PreparedStatement statement = connection.prepareStatement(template)) {
+            statement.setString(1, comment.text);
             ResultSet cursor = statement.executeQuery();
             if (!cursor.next()) {
                 return Optional.empty();

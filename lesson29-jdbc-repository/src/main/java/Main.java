@@ -4,14 +4,10 @@ import models.Comment;
 import models.User;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
@@ -54,23 +50,20 @@ public class Main {
         book2.price = new BigDecimal("100500700.255123");
 
         final Comment comment1 = new Comment();
-        comment1.date =  Date.from(Instant.now());
+        //comment1.date =  Date.from(Instant.now());
+        comment1.date =  new Date(System.currentTimeMillis());
         comment1.text = "Good book";
 
-        Collection <Comment> commentsFirstbook = new ArrayList<>();
-        commentsFirstbook.add(comment1);
+//        Collection <Comment> commentsFirstbook = new ArrayList<>();
+//        commentsFirstbook.add(comment1);
 
         final Comment comment2 = new Comment();
-        comment2.date = Date.from(Instant.now());
+        comment2.date = new Date(System.currentTimeMillis());
         comment2.text = "Bad book";
 
         final Comment comment3 = new Comment();
-        comment3.date = Date.from(Instant.now());
+        comment3.date = new Date(System.currentTimeMillis());
         comment3.text = "Nice book";
-
-        Collection<Comment> commentsSecondBooK = new ArrayList<>();
-        commentsSecondBooK.add(comment2);
-        commentsSecondBooK.add(comment3);
 
         final User user1 = new User();
         user1.nickName = "nickFirst";
@@ -80,12 +73,16 @@ public class Main {
         user2.nickName = "nickSecond";
         user2.registryDate = "6.05.2001";
 
-        //repository.save(book1, author1);
-        //repository.save(book1, author1, comment1, user1); //надо понять как добавлять много коментов к одной книге
-        //repository.save(book2, author2, comment2, user2);
-        //reposotiry.saveUser
-        Collection<Book> books = repository.getAll();
-        System.out.println("Books count:" + books.size());
+        repository.saveBook(book1, author1);
+        repository.saveComment(comment1, user1, book1);
+        repository.saveBook(book2, author2);
+        repository.saveComment(comment2, user2, book2);
+        repository.saveComment(comment3, user2, book2);
+        Collection<Book> books = repository.getAllBook();
+        System.out.println("Books count: " + books.size());
+
+        Collection<Comment> comments = repository.getAllComments();
+        System.out.println("Comments count: " + comments.size());
     }
 
     public final String CreateBooksTableQuery = "CREATE TABLE IF NOT EXISTS books (" +
@@ -104,16 +101,16 @@ public class Main {
 
     public final String CreateCommentsTableQuery = "CREATE TABLE IF NOT EXISTS comments (" +
             " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            " date DATETIME," +
+            " date DATE," +
             " text VARCHAR(100)," +
-            " userId INTEGER"+
-            " bookId INTEGER"+
+            " userId INTEGER," +
+            " bookId INTEGER" +
             ")";
 
     public final String CreateUsersTableQuery = "CREATE TABLE IF NOT EXISTS users (" +
             " id INTEGER PRIMARY KEY AUTOINCREMENT," +
             " registryDate VARCHAR(100)," +
-            " nickName VARCHAR(100)"+
+            " nickName VARCHAR(100)" +
             ")";
 
     private void createTables(Connection connection) throws SQLException {

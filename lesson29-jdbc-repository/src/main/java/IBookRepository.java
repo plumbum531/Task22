@@ -1,5 +1,7 @@
 import models.Author;
 import models.Book;
+import models.Comment;
+import models.User;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -9,7 +11,7 @@ public interface IBookRepository {
      * @return
      * @throws RuntimeException Если что-то пошло не так во время извлечения книг из хранилища.
      */
-    Collection<Book> getAll();
+    Collection<Book> getAllBook();
 
     Optional<Book> getById(int id);
 
@@ -18,12 +20,30 @@ public interface IBookRepository {
      * Если книга или автор не сохранены, то они добавляются в хранилище.
      * Если книга или автор сохранены, то они обновляются в хранилище.
      */
-    void save(Book book, Author author);
-//
-//    void save(Author author);
+    void saveBook(Book book, Author author);
 
     void deleteBook(int id);
+
     void deleteBook(Book book);
+
+    void saveAuthor(Author author);
+
     void deleteAuthor(int id);
+
     void deleteAuthor(Author author);
+
+    void saveUser(User user);
+
+    void deleteUser(int id);
+
+    void deleteUser(User user);
+
+    Collection<Comment> getAllComments();
+
+    void saveComment(Comment comment, User user, Book book);
+
+    void deleteComment(int id);
+
+    void deleteComment(Comment comment);
+
 }

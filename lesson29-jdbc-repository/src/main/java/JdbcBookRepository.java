@@ -4,6 +4,7 @@ import dao.CommentDao;
 import dao.UserDao;
 import models.Author;
 import models.Book;
+import models.Comment;
 import models.User;
 
 import java.sql.Connection;
@@ -33,7 +34,7 @@ public class JdbcBookRepository implements IBookRepository {
     }
 
     @Override
-    public Collection<Book> getAll() {
+    public Collection<Book> getAllBook() {
         return bookDao.getAllBooks();
     }
 
@@ -43,7 +44,7 @@ public class JdbcBookRepository implements IBookRepository {
     }
 
     @Override
-    public void save(Book book, Author author) {
+    public void saveBook(Book book, Author author) {
         if (author.id == INVALID_ID) {
             author.id = authorDao.insertAuthor(author);
         } else {
@@ -77,6 +78,11 @@ public class JdbcBookRepository implements IBookRepository {
     }
 
     @Override
+    public void saveAuthor(Author author) {
+        authorDao.insertAuthor(author);
+    }
+
+    @Override
     public void deleteAuthor(int id) {
         authorDao.delete(id);
     }
@@ -84,5 +90,68 @@ public class JdbcBookRepository implements IBookRepository {
     @Override
     public void deleteAuthor(Author author) {
         authorDao.delete(author.id);
+    }
+
+    @Override
+    public void saveUser(User user) {
+        userDao.insertUser(user);
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        userDao.delete(id);
+    }
+
+    @Override
+    public void deleteUser(User user) {
+        userDao.delete(user.idUser);
+    }
+
+    @Override
+    public Collection<Comment> getAllComments() {
+        return commentDao.getAllComment();
+    }
+
+    @Override
+    /**
+     * подоразумевается, что "commet" не может быть без книги.
+     */
+    public void saveComment(Comment comment, User user, Book book) {
+        comment.bookId = book.id;
+
+        if (user.idUser == INVALID_ID) {//есть ли у usera id
+            comment.userId = userDao.insertUser(user);
+        } else {
+            Optional<User> findUser = userDao.getUserByNickName(user.nickName);
+            if (findUser.isPresent()) {
+                comment.userId = findUser.get().idUser;
+            }
+        }
+
+        if (comment.text.length() != INVALID_ID) {// порверка на коммит нулевой длинны
+            if (comment.id == INVALID_ID) {//есть ли у коммита id
+                Optional<Comment> findCommet = commentDao.getCommentByText(comment);
+                if (findCommet.isPresent()) {
+                    comment.id = findCommet.get().id;
+                    commentDao.updateComment(comment);
+                } else {
+                    commentDao.insertComment(comment);
+                }
+            } else {
+                commentDao.updateComment(comment);
+            }
+        } else {
+            System.out.println("Can not add empty comment");
+        }
+    }
+
+    @Override
+    public void deleteComment(int id) {
+        commentDao.delete(id);
+    }
+
+    @Override
+    public void deleteComment(Comment comment) {
+        commentDao.delete(comment.id);
     }
 }
