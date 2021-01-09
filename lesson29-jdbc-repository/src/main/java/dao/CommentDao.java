@@ -29,10 +29,9 @@ public class CommentDao {
     }
 
     public void insertComment(Comment comment) {
-        //final String insertTemplate = "INSERT INTO comments(text,userId,bookId) VALUES(?,?,?)";
         final String insertTemplate = "INSERT INTO comments(date,text,userId,bookId) VALUES(?,?,?,?)";
         try (PreparedStatement statement = connection.prepareStatement(insertTemplate)) {
-            statement.setDate(1, comment.date);
+            statement.setObject(1, new Timestamp(comment.date.getTime()));
             statement.setString(2, comment.text);
             statement.setInt(3, comment.userId);
             statement.setInt(4, comment.bookId);
@@ -49,7 +48,7 @@ public class CommentDao {
     public void updateComment(Comment comment) {
         final String updateTemplate = "UPDATE comments SET date=?, text=?, userId=?, bookId=? WHERE id=?";
         try (PreparedStatement statement = connection.prepareStatement(updateTemplate)) {
-            statement.setDate(1, comment.date);
+            statement.setObject(1, new Timestamp(comment.date.getTime()));
             statement.setString(2, comment.text);
             statement.setInt(3, comment.userId);
             statement.setInt(4, comment.bookId);

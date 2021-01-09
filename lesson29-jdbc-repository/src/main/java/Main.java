@@ -5,8 +5,6 @@ import models.User;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class Main {
@@ -50,12 +48,8 @@ public class Main {
         book2.price = new BigDecimal("100500700.255123");
 
         final Comment comment1 = new Comment();
-        //comment1.date =  Date.from(Instant.now());
-        comment1.date =  new Date(System.currentTimeMillis());
+        comment1.date = new Date(System.currentTimeMillis());
         comment1.text = "Good book";
-
-//        Collection <Comment> commentsFirstbook = new ArrayList<>();
-//        commentsFirstbook.add(comment1);
 
         final Comment comment2 = new Comment();
         comment2.date = new Date(System.currentTimeMillis());
@@ -101,7 +95,7 @@ public class Main {
 
     public final String CreateCommentsTableQuery = "CREATE TABLE IF NOT EXISTS comments (" +
             " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            " date DATE," +
+            " date DATETIME," +
             " text VARCHAR(100)," +
             " userId INTEGER," +
             " bookId INTEGER" +
