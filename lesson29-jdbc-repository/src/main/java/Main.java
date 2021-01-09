@@ -77,6 +77,9 @@ public class Main {
 
         Collection<Comment> comments = repository.getAllComments();
         System.out.println("Comments count: " + comments.size());
+
+        Collection<Comment> commnetsByIdUser = repository.getAllCommentByUserId(user2);
+        System.out.println("commnetsByIdUser: " + commnetsByIdUser.size());
     }
 
     public final String CreateBooksTableQuery = "CREATE TABLE IF NOT EXISTS books (" +

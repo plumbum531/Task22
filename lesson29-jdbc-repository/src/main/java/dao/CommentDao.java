@@ -1,6 +1,7 @@
 package dao;
 
 import models.Comment;
+import models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -121,4 +122,22 @@ public class CommentDao {
         }
     }
 
+    public Collection<Comment> getAllCommentByUserId(User user) {
+
+        //связь один ко многим
+        final Collection<Comment> commentsCollection = new ArrayList<>();
+        final String template = "SELECT * FROM comments" +
+                " JOIN users ON users.id = comments.bookId" +
+                " WHERE users.id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(template)) {
+            statement.setInt(1, user.idUser);
+            ResultSet cursor = statement.executeQuery();
+            while (cursor.next()) {
+                commentsCollection.add(createCommentsFromCursorIfPossible(cursor));
+            }
+            return commentsCollection;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find comment", e);
+        }
+    }
 }

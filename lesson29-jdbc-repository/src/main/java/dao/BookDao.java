@@ -58,6 +58,7 @@ public class BookDao {
     }
 
     public Optional<Book> getBookByTitleAndAuthor(String bookTitle, String authorName) {
+        //связь один ко многим "ON authors.id = books.author_id" один автор сного книг
         final String template = "SELECT books.* FROM books" +
                 " JOIN authors ON authors.id = books.author_id" +
                 " WHERE books.title = ? AND authors.name = ?" +

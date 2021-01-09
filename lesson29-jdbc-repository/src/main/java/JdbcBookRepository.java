@@ -45,6 +45,7 @@ public class JdbcBookRepository implements IBookRepository {
 
     @Override
     public void saveBook(Book book, Author author) {
+        // FIXME: 10.01.2021 при такой логике автора без id, хоть и старые все равно добавляются в DB
         if (author.id == INVALID_ID) {
             author.id = authorDao.insertAuthor(author);
         } else {
@@ -112,15 +113,20 @@ public class JdbcBookRepository implements IBookRepository {
         return commentDao.getAllComment();
     }
 
-    @Override
     /**
      * подоразумевается, что "commet" не может быть без книги.
      */
+    @Override
     public void saveComment(Comment comment, User user, Book book) {
         comment.bookId = book.id;
 
         if (user.idUser == INVALID_ID) {//есть ли у usera id
-            comment.userId = userDao.insertUser(user);
+            Optional<User> findUser = userDao.getUserByNickName(user.nickName);
+            if (!findUser.isPresent()) {
+                comment.userId = userDao.insertUser(user);
+            } else {
+                comment.userId = findUser.get().idUser;
+            }
         } else {
             Optional<User> findUser = userDao.getUserByNickName(user.nickName);
             if (findUser.isPresent()) {
@@ -154,4 +160,17 @@ public class JdbcBookRepository implements IBookRepository {
     public void deleteComment(Comment comment) {
         commentDao.delete(comment.id);
     }
+
+    @Override
+    public Collection<Comment> getAllCommentByUserId(User user) {
+
+        Optional<User> userFromDataDase = userDao.getUserByNickName(user.nickName);
+        if (userFromDataDase.isPresent()) {
+            user.idUser = userFromDataDase.get().idUser;
+        } else {
+            System.out.println("Can not find user!");
+        }
+        return commentDao.getAllCommentByUserId(user);
+    }
+
 }

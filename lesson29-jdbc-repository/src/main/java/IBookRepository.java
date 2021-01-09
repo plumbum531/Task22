@@ -46,4 +46,6 @@ public interface IBookRepository {
 
     void deleteComment(Comment comment);
 
+    Collection <Comment> getAllCommentByUserId(User user);
+
 }
