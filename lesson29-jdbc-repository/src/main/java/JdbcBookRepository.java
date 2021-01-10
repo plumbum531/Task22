@@ -1,3 +1,4 @@
+import com.sun.source.doctree.AuthorTree;
 import dao.AuthorDao;
 import dao.BookDao;
 import dao.CommentDao;
@@ -45,18 +46,20 @@ public class JdbcBookRepository implements IBookRepository {
 
     @Override
     public void saveBook(Book book, Author author) {
-        // FIXME: 10.01.2021 при такой логике автора без id, хоть и старые все равно добавляются в DB
         if (author.id == INVALID_ID) {
-            author.id = authorDao.insertAuthor(author);
+            Optional<Author> authorPresent = authorDao.getAuthorByName(author.name);
+            if(!authorPresent.isPresent()){
+                author.id = authorDao.insertAuthor(author);
+                book.authorId = author.id;
+            }else {
+                book.authorId = authorDao.updateAuthor(author);
+            }
         } else {
-            authorDao.updateAuthor(author);
+            book.authorId = authorDao.updateAuthor(author);
         }
 
-        book.authorId = author.id;
-
         if (book.id == INVALID_ID) {
-            Optional<Book> matchingBook =
-                    bookDao.getBookByTitleAndAuthor(book.title, author.name);
+            Optional<Book> matchingBook = bookDao.getBookByTitleAndAuthor(book.title, author.name);
             if (matchingBook.isPresent()) {
                 book.id = matchingBook.get().id;
                 bookDao.updateBook(book);
@@ -81,6 +84,11 @@ public class JdbcBookRepository implements IBookRepository {
     @Override
     public void saveAuthor(Author author) {
         authorDao.insertAuthor(author);
+    }
+
+    @Override
+    public Optional<Author> getAuthorByName(String name) {
+        return authorDao.getAuthorByName(name);
     }
 
     @Override

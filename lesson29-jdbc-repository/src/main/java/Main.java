@@ -71,7 +71,7 @@ public class Main {
         repository.saveComment(comment1, user1, book1);
         repository.saveBook(book2, author2);
         repository.saveComment(comment2, user2, book2);
-        repository.saveComment(comment3, user2, book2);
+        repository.saveComment(comment3, user2, book1);
         Collection<Book> books = repository.getAllBook();
         System.out.println("Books count: " + books.size());
 
@@ -79,7 +79,7 @@ public class Main {
         System.out.println("Comments count: " + comments.size());
 
         Collection<Comment> commnetsByIdUser = repository.getAllCommentByUserId(user2);
-        System.out.println("commnetsByIdUser: " + commnetsByIdUser.size());
+        System.out.println("Comment count by user " + user2.nickName + " : " + commnetsByIdUser.size());
     }
 
     public final String CreateBooksTableQuery = "CREATE TABLE IF NOT EXISTS books (" +

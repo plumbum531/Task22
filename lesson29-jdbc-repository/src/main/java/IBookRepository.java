@@ -32,6 +32,8 @@ public interface IBookRepository {
 
     void deleteAuthor(Author author);
 
+    Optional<Author> getAuthorByName(String name);
+
     void saveUser(User user);
 
     void deleteUser(int id);

@@ -26,10 +26,12 @@ public class AuthorDao {
         }
     }
 
-    public Optional<Author> getAuthorById(int id) {
-        try (Statement statement = connection.createStatement()) {
-            ResultSet cursor = statement.executeQuery(
-                    "SELECT * FROM authors WHERE id = " + id);
+    public Optional<Author> getAuthorByName(String name) {
+        final String template = "SELECT * FROM authors WHERE name = ?";
+        try (PreparedStatement statement = connection.prepareStatement(template)) {
+            statement.setString(1, name);
+            ResultSet cursor = statement.executeQuery();
+
             if (!cursor.next()) {
                 return Optional.empty();
             }
@@ -68,19 +70,22 @@ public class AuthorDao {
         }
     }
 
-    public void updateAuthor(Author author) {
+    public int updateAuthor(Author author) {
         final String insertTemplate =
                 "UPDATE authors SET name = ?, birth_year = ? WHERE id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(insertTemplate)) {
             statement.setString(1, author.name);
             statement.setInt(2, author.birthYear);
-            statement.setInt(3, author.id);
+            int presentAuthorId = getAuthorByName(author.name).get().id;
+            System.out.println("presentAuthorId: " + presentAuthorId);
+            statement.setInt(3, presentAuthorId);
             int affectedRows = statement.executeUpdate();
             if (affectedRows != 1) {
                 throw new IllegalArgumentException(
                         "Affected rows on update: " + affectedRows);
             }
+            return presentAuthorId;
         } catch (SQLException e) {
             throw new RuntimeException("Failed to update author", e);
         }
