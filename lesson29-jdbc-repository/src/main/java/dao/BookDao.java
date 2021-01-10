@@ -144,8 +144,6 @@ public class BookDao {
         book.publishYear = cursor.getInt("publish_year");
         book.price = cursor.getBigDecimal("price");
         book.authorId = cursor.getInt("author_id");
-//        TODO book.author = authorDao.getAuthorById(authorId).orElseThrow(
-//                () -> new IllegalStateException("Failed to query author: " + authorId));
         return book;
     }
 

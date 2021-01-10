@@ -2,7 +2,10 @@ package dao;
 
 import models.Author;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class AuthorDao {
@@ -77,8 +80,13 @@ public class AuthorDao {
         try (PreparedStatement statement = connection.prepareStatement(insertTemplate)) {
             statement.setString(1, author.name);
             statement.setInt(2, author.birthYear);
-            int presentAuthorId = getAuthorByName(author.name).get().id;
-            System.out.println("presentAuthorId: " + presentAuthorId);
+            int presentAuthorId;
+            if (getAuthorByName(author.name).isPresent()) {
+                presentAuthorId = getAuthorByName(author.name).get().id;
+            } else {
+                System.out.println("Author not found");
+                presentAuthorId = 0;
+            }
             statement.setInt(3, presentAuthorId);
             int affectedRows = statement.executeUpdate();
             if (affectedRows != 1) {

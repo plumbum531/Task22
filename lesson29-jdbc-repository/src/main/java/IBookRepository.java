@@ -50,4 +50,8 @@ public interface IBookRepository {
 
     Collection <Comment> getAllCommentByUserId(User user);
 
+    void createRelationshipTableBookAuthor();
+
+    void getAutorBook(String title);
+
 }

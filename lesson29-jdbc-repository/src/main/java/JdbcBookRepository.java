@@ -1,8 +1,4 @@
-import com.sun.source.doctree.AuthorTree;
-import dao.AuthorDao;
-import dao.BookDao;
-import dao.CommentDao;
-import dao.UserDao;
+import dao.*;
 import models.Author;
 import models.Book;
 import models.Comment;
@@ -19,18 +15,14 @@ public class JdbcBookRepository implements IBookRepository {
     private final BookDao bookDao;
     private final CommentDao commentDao;
     private final UserDao userDao;
+    private final ManyToManyDao manyToManyDao;
 
     public JdbcBookRepository(Connection connection) {
         bookDao = new BookDao(connection);
         authorDao = new AuthorDao(connection);
         commentDao = new CommentDao(connection);
         userDao = new UserDao(connection);
-
-        String expr = "SELECT books.title, authors.name" +
-                " FROM books" +
-                " JOIN authors_books ON books.id = authors_books.book_id" +
-                " JOIN authors ON authors.id = authors_books.author_id" +
-                " WHERE books.publish_year > 2000";
+        manyToManyDao = new ManyToManyDao(connection, bookDao, authorDao);
 
     }
 
@@ -180,5 +172,15 @@ public class JdbcBookRepository implements IBookRepository {
         }
         return commentDao.getAllCommentByUserId(user);
     }
+
+    @Override
+    public void createRelationshipTableBookAuthor() {
+        manyToManyDao.createSelectFromCombinatedTable();
+    }
+    @Override
+    public void getAutorBook(String title){
+        manyToManyDao.getAutorBook(title);
+    }
+
 
 }

@@ -39,11 +39,11 @@ public class Main {
         book1.price = new BigDecimal("3000.33");
 
         final Author author2 = new Author();
-        author2.name = "Дейтел";
+        author2.name = "Deiteil";
         author2.birthYear = 1960;
 
         final Book book2 = new Book();
-        book2.title = "Java для начинающих";
+        book2.title = "Java for beginers";
         book2.publishYear = 2005;
         book2.price = new BigDecimal("100500700.255123");
 
@@ -80,6 +80,9 @@ public class Main {
 
         Collection<Comment> commnetsByIdUser = repository.getAllCommentByUserId(user2);
         System.out.println("Comment count by user " + user2.nickName + " : " + commnetsByIdUser.size());
+
+        repository.createRelationshipTableBookAuthor();
+        repository.getAutorBook(book2.title);
     }
 
     public final String CreateBooksTableQuery = "CREATE TABLE IF NOT EXISTS books (" +
@@ -110,12 +113,19 @@ public class Main {
             " nickName VARCHAR(100)" +
             ")";
 
+    public final String CreateRelationshipTableBookAuthor = "CREATE TABLE IF NOT EXISTS relationship_book_author (" +
+            " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " bookId INTEGER," +
+            " authorId INTEGER" +
+            ")";
+
     private void createTables(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(CreateBooksTableQuery);
             statement.executeUpdate(CreateAuthorsTableQuery);
             statement.executeUpdate(CreateCommentsTableQuery);
             statement.executeUpdate(CreateUsersTableQuery);
+            statement.executeUpdate(CreateRelationshipTableBookAuthor);
         }
     }
 }
