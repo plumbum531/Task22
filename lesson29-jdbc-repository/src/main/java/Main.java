@@ -82,7 +82,7 @@ public class Main {
         System.out.println("Comment count by user " + user2.nickName + " : " + commnetsByIdUser.size());
 
         repository.createRelationshipTableBookAuthor();
-        repository.getAutorBook(book2.title);
+        repository.printTable();
     }
 
     public final String CreateBooksTableQuery = "CREATE TABLE IF NOT EXISTS books (" +
@@ -114,9 +114,11 @@ public class Main {
             ")";
 
     public final String CreateRelationshipTableBookAuthor = "CREATE TABLE IF NOT EXISTS relationship_book_author (" +
-            " id INTEGER PRIMARY KEY AUTOINCREMENT," +
             " bookId INTEGER," +
-            " authorId INTEGER" +
+            " authorId INTEGER," +
+            " PRIMARY KEY (bookId, authorId)," +
+            " FOREIGN KEY (bookId) REFERENCES books (id)," +
+            " FOREIGN KEY (authorId) REFERENCES authors (id)" +
             ")";
 
     private void createTables(Connection connection) throws SQLException {

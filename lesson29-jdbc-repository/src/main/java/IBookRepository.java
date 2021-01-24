@@ -52,6 +52,6 @@ public interface IBookRepository {
 
     void createRelationshipTableBookAuthor();
 
-    void getAutorBook(String title);
+    void printTable();
 
 }

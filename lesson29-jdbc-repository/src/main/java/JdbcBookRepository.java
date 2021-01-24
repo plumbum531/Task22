@@ -134,7 +134,7 @@ public class JdbcBookRepository implements IBookRepository {
             }
         }
 
-        if (comment.text.length() != INVALID_ID) {// порверка на коммит нулевой длинны
+        if (comment.text != null) {// порверка на нулевой коммит
             if (comment.id == INVALID_ID) {//есть ли у коммита id
                 Optional<Comment> findCommet = commentDao.getCommentByText(comment);
                 if (findCommet.isPresent()) {
@@ -178,8 +178,8 @@ public class JdbcBookRepository implements IBookRepository {
         manyToManyDao.createSelectFromCombinatedTable();
     }
     @Override
-    public void getAutorBook(String title){
-        manyToManyDao.getAutorBook(title);
+    public void printTable(){
+        manyToManyDao.printTable();
     }
 
 

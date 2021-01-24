@@ -6,7 +6,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 public class UserDao {
     private final Connection connection;
@@ -45,7 +44,7 @@ public class UserDao {
 
     public Optional<User> getUserByNickName(String nickName) {
         final String insertTemlate = "SELECT * FROM users WHERE nickName = ? LIMIT 1";
-        try ( PreparedStatement statement = connection.prepareStatement(insertTemlate)) {
+        try (PreparedStatement statement = connection.prepareStatement(insertTemlate)) {
             statement.setString(1, nickName);
             ResultSet cursor = statement.executeQuery();
             if (!cursor.next()) {

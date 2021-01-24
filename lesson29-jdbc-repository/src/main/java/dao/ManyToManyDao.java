@@ -1,12 +1,9 @@
 package dao;
 
-import models.Book;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 
 public class ManyToManyDao {
     Connection connection;
@@ -20,9 +17,7 @@ public class ManyToManyDao {
     }
 
     public void createSelectFromCombinatedTable() {
-        //связь многие ко многим
-        String template = "SELECT books.id, authors.id" +
-                " FROM books" +
+        String template = "SELECT books.id, authors.id FROM books" +
                 " JOIN authors ON authors.id = books.author_id";
         try (PreparedStatement preparedStatement = connection.prepareStatement(template)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -30,14 +25,13 @@ public class ManyToManyDao {
                 insertCursorSetInTable(resultSet);
             }
 
-        } catch (SQLException throwables) {
-            throw new RuntimeException("Failed to create combinated table", throwables);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create combined table", e);
         }
     }
 
     /**
      * не решена проблема вставки/пропуска повторяющихся наборов resultSet'a
-     *
      */
     void insertCursorSetInTable(ResultSet resultSet) {
         String template = "INSERT INTO relationship_book_author(bookId, authorId) VALUES(?,?)";
@@ -47,46 +41,25 @@ public class ManyToManyDao {
             statement.setInt(1, bookId);
             statement.setInt(2, authorId);
             statement.executeUpdate();
-        } catch (SQLException throwables) {
-            throw new RuntimeException("Failed to add row into combinated table", throwables);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to add row into combined table", e);
         }
     }
 
-    public void getAutorBook(String title) {
-        String template = "SELECT bookId, authorId FROM relationship_book_author WHERE bookID = ?";
+    public void printTable() {
+        String template = "SELECT * FROM relationship_book_author JOIN books ON bookId = books.id" +
+                " JOIN authors ON authorId = authors.id";
         try (PreparedStatement statement = connection.prepareStatement(template)) {
-            Optional<Book> bookTitle = bookDao.getBookByName(title);
-            if (bookTitle.isPresent()) {
-                int titlebook = bookTitle.get().id;
-                statement.setInt(1, titlebook);
-            } else {
-                System.out.println("Book not found!");
-            }
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                printResultSet(resultSet);
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2) + " " +
+                        resultSet.getString(3) + " " + resultSet.getString(4) + " " +
+                        resultSet.getString(5) + " " + resultSet.getString(6) + " " +
+                        resultSet.getString(7) + " " + resultSet.getString(8) + " " +
+                        resultSet.getString(9) + " " + resultSet.getString(10));
             }
         } catch (SQLException throwables) {
             throw new RuntimeException("Failed to add row into combinated table", throwables);
         }
     }
-
-    void printResultSet(ResultSet set) {
-        String template = "SELECT books.title, authors.name FROM books JOIN authors" +
-                " ON authors.id = books.author_id WHERE books.id = ? AND  authors.id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(template)) {
-            int bookId = set.getInt(1);
-            int authorId = set.getInt(2);
-            statement.setInt(1, bookId);
-            statement.setInt(2, authorId);
-            ResultSet resultSet = statement.executeQuery();
-            System.out.println("Title is: " + resultSet.getString(1) +
-                    ", author is: " + resultSet.getString(2));
-
-        } catch (SQLException throwables) {
-            throw new RuntimeException("Failed to add row into combinated table", throwables);
-        }
-    }
-
-
 }

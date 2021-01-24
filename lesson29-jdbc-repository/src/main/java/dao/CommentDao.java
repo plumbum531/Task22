@@ -127,7 +127,7 @@ public class CommentDao {
         //связь один ко многим
         final Collection<Comment> commentsCollection = new ArrayList<>();
         final String template = "SELECT * FROM comments" +
-                " JOIN users ON users.id = comments.bookId" +
+                " JOIN users ON users.id = comments.userId" +
                 " WHERE users.id = ?";
         try (PreparedStatement statement = connection.prepareStatement(template)) {
             statement.setInt(1, user.idUser);
